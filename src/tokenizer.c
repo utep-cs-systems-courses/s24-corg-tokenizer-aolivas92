@@ -107,10 +107,73 @@ copy_str(char *inStr, short len) {
 
 /* tokenize: Returns a freshly allocated zero-terminated vector of freshly allocated space-separated tokens from zero-terminated str. */
 char **
-tokenize(char *str) {}
+tokenize(char *str) {
+  // If pointer doesn't exist return NULL
+  if (!str)
+    return NULL;
+
+  // Get the number of tokens and verify number
+  int numTokens = count_tokens(str);
+  if (numTokens < 1)
+    return NULL;
+
+  // Allocate the space for the tokens and verify, extra space for terminator
+  char **tokens = (char **)malloc((numTokens + 1) * sizeof(char *));
+  if (!tokens)
+    return NULL;
+
+  int i = 0;
+  // While we aren't at the end of the string
+  while (*str) {
+    // get the start of the token and verify
+    char *tokenStrtPtr = token_start(str);
+    if (tokenStrtPtr == NULL)
+      break;
+
+    // Get the end of the token and use that to get the len
+    char *tokenEndPtr = token_terminator(tokenStrtPtr);
+    int tokenLen = tokenEndPtr - tokenStrtPtr;
+
+    // Copy the token to our current tokens location
+    tokens[i] = copy_str(tokenStrtPtr, tokenLen);
+
+    // Set the start of the string to the end of our token
+    str = tokenEndPtr;
+    // Move on to the next point in the tokens
+    i++;
+  }
+
+  tokens[i] = '\0';
+  return tokens;
+}
 
 /* print_tokens: prints all tokens. */
-void print_tokens(char **tokens) {}
+void print_tokens(char **tokens) {
+  // If pointer doesn't exist return
+  if (!tokens)
+    return;
+
+  int i = 0;
+  // Iterate through the tokens and print the strings
+  while (*tokens[i] != '\0') {
+    printf("token[%d] = %s\n", tokens[i]);
+    i++;
+  }
+}
 
 /* free_tokens: frees all tokens and the vector containing them. */
-void free_tokens(char **tokens) {}
+void free_tokens(char **tokens) {
+  // If pointer doesn't exist return
+  if (!tokens)
+    return;
+
+  int i = 0;
+  // Iterate through the tokens and free each one
+  while (*tokens[i] != '\0') {
+    free(tokens[i]);
+    i++;
+  }
+
+  // Free the tokens ptrs
+  free(tokens);
+}
