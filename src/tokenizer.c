@@ -1,39 +1,40 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAXLINE 1000     /* maximum input line length */
+#define BUFFER_SIZE 1000     /* buffer size */
 
 int getline2(char [], int);
 
 int main() {
-  char line[MAXLINE];
+  char *line = NULL;
+  long size = BUFFER_SIZE;
+  int characters;
 
   printf(">");
-  while (getline2(line, MAXLINE) > 0)
-    printf("%s\n>", line);
+  while ((characters = getline(&line, &size, stdin)) != -1) {
+    printf("%s", line);
+    printf(">");
+  }
+
+  free(line);
+  return 0;
+}
+
+/* space_char: returns non-zero if c is a whitespace character */
+int space_char(char c) {
+  if (c == ' ' || c == '\t')
+    return 1;
 
   return 0;
 }
 
-/* getline: get line into, return length, 
-       there is a getline in stdio.h but I decicded to use my own. */
-int getline2(char s[], int lim) {
-  int c, i;
-
-  i = 0;
-  while (--lim > 0 && (c = getchar()) != EOF && c != '\n')
-    s[i++] = c;
-
-  s[i] = '\0';
-
-  return i;
-}
-
-/* space_char: returns non-zero if c is a whitespace character */
-int space_char(char c) {}
-
 /* non_space_char: returns non-zero if c is a non-whitespace */
-int non_space_char(char c) {}
+int non_space_char(char c) {
+  if (c != ' ' || c != '\t')
+    return 1;
+
+  return 0;
+}
 
 /* token_start: returns a pointer to the first character of the next space-separated token in zero-terminated str. Zero pointer if str doesn't contain any tokens */
 char *
