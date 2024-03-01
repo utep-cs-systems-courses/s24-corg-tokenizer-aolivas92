@@ -73,7 +73,7 @@ void print_history(List *list) {
 
   // While curr isn't NULL
   while (curr) {
-    printf("Item %d: %s\n", counter, curr->str);
+    printf("Item %d: %s\n", count, curr->str);
     count++;
     curr = curr->next;
   }

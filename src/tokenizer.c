@@ -1,23 +1,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "tokenizer.h"
+#include "history.h"
 
 #define BUFFER_SIZE 1000     /* buffer size */
+List *currList; // Couldn't do it without changing parameters
 
 int main() {
   char *s = NULL;
   long size = BUFFER_SIZE;
   int characters;
+  currList = init_history();
 
+  printf("Options: 1) to view history | !# to veiw a specific history | enter words to tokenize\n");
   printf(">");
   while ((characters = getline(&s, &size, stdin)) != -1) {
-    printf("%s", s);
-    char ** tokens = tokenize(s);
-    print_tokens(tokens);
-    free_tokens(tokens);
+    if (*s == '1') {
+      print_history(currList);
+    } else if (*s == '!') {
+      s++;
+      int id = *s;
+      printf("id: %d\n", id);
+      char *currStr = get_history(currList, id);
+    } else {
+      printf("%s", s);
+      char ** tokens = tokenize(s);
+      print_tokens(tokens);
+      free_tokens(tokens);
+    }
     printf(">");
   }
 
+    free_history(currList);
   free(s);
   return 0;
 }
@@ -155,7 +169,9 @@ tokenize(char *str) {
     short tokenLen = tokenEndPtr - tokenStrtPtr;
 
     // Copy the token to our current tokens location
-    tokens[i] = copy_str(tokenStrtPtr, tokenLen);
+    char *cpyStr = copy_str(tokenStrtPtr, tokenLen);
+    tokens[i] = cpyStr;
+    add_history(currList, cpyStr);
 
     // Set the start of the string to the end of our token
     str = tokenEndPtr;
