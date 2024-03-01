@@ -19,9 +19,9 @@ int main() {
       print_history(currList);
     } else if (*s == '!') {
       s++;
-      int id = *s;
-      printf("id: %d\n", id);
+      int id = atoi(s);
       char *currStr = get_history(currList, id);
+      printf("Item %d: %s\n", id, currStr);
     } else {
       printf("%s", s);
       char ** tokens = tokenize(s);
