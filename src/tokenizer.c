@@ -109,20 +109,22 @@ copy_str(char *inStr, short len) {
   if(!inStr)
     return NULL;
   
-  char *cpyStr;
-  cpyStr = (char *)malloc(len+1);
-
+  char *cpyStr = malloc(len+1);
   // If we failed to allocated return NULL
   if (!cpyStr)
     return NULL;
 
+  char *cpyStrStart = cpyStr;
+  printf("before copy:");
   // For i to len and inStr not a space copy each char to cpyStr
-  for (int i = 0; i < len && *inStr != '\0'; i++)
-    cpyStr[i] = *inStr++;
-
-  cpyStr[len] = '\0';
-
-  return cpyStr;
+  int i;
+  for (i = 0; i < len; i++) {
+    *cpyStr++ = *inStr++;
+  }
+ 
+  *cpyStr = '\0';
+  printf("after copy:");
+  return cpyStrStart;
 }
 
 /* tokenize: Returns a freshly allocated zero-terminated vector of freshly allocated space-separated tokens from zero-terminated str. */
@@ -155,11 +157,11 @@ tokenize(char *str) {
     // Get the end of the token and use that to get the len
     char *tokenEndPtr = token_terminator(tokenStrtPtr);
     printf("end of token: %c\n", *tokenEndPtr);
-    int tokenLen = tokenEndPtr - tokenStrtPtr;
-    printf("token len: %d", tokenLen);
+    short tokenLen = tokenEndPtr - tokenStrtPtr;
+    printf("token len: %d\n", tokenLen);
 
     // Copy the token to our current tokens location
-    printf("before copy_str\n");
+    printf("before copy_str:\n");
     char *copy = copy_str(tokenStrtPtr, tokenLen);
     printf("copy String: %s", *copy);
     tokens[i] = copy;
