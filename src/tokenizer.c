@@ -164,8 +164,7 @@ tokenize(char *str) {
     numTokens--;
   }
 
-  tokens[i] = '\0';
-  tokens[i+1] = '\0';
+  tokens[i] = NULL;
   return tokens;
 }
 
@@ -177,11 +176,10 @@ void print_tokens(char **tokens) {
 
   int i = 0;
   // Iterate through the tokens and print the strings
-  while (*tokens[i] != '\0') {
+  while (tokens[i] != NULL) {
     printf("token[%d] = %s\n", i, tokens[i]);
     i++;
   }
-  printf("after print_tokens");
 }
 
 /* free_tokens: frees all tokens and the vector containing them. */
@@ -192,7 +190,7 @@ void free_tokens(char **tokens) {
 
   int i = 0;
   // Iterate through the tokens and free each one
-  while (*tokens[i] != '\0') {
+  while (tokens[i] != NULL) {
     free(tokens[i]);
     i++;
   }
