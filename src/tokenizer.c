@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "tokenizer.h"
 
 #define BUFFER_SIZE 1000     /* buffer size */
 
@@ -13,6 +14,9 @@ int main() {
   printf(">");
   while ((characters = getline(&s, &size, stdin)) != -1) {
     printf("%s", s);
+    char ** tokens = tokenize(s);
+    print_tokens(tokens);
+    free_tokens(tokens);
     printf(">");
   }
 
@@ -44,6 +48,7 @@ token_start(char *str) {
     return NULL;
 
   // skip all the whitespace
+  printf("start of token_start");
   while (space_char(*str))
       str++;
 
@@ -60,6 +65,7 @@ token_terminator(char *token) {
     return NULL;
 
   // keep going until we hit a new line or a space
+  printf("start of terminator");
   while (non_space_char(*token) && *token != '\n')
     token++;
 
@@ -74,6 +80,7 @@ int count_tokens(char *str) {
     return -1;
 
   // Keep counting until we hit a space or new line
+  printf("start of count");
   while (non_space_char(*str) && *str != '\n') {
     str++;
     count++;
@@ -97,6 +104,7 @@ copy_str(char *inStr, short len) {
     return NULL;
 
   // For i to len and inStr not a space copy each char to cpyStr
+  printf("start of cpy");
   for (int i = 0; i < len && non_space_char(*inStr); i++)
     cpyStr[i] = *inStr++;
 
@@ -124,6 +132,7 @@ tokenize(char *str) {
 
   int i = 0;
   // While we aren't at the end of the string
+  printf("start of tokenizer");
   while (*str) {
     // get the start of the token and verify
     char *tokenStrtPtr = token_start(str);
@@ -155,6 +164,7 @@ void print_tokens(char **tokens) {
 
   int i = 0;
   // Iterate through the tokens and print the strings
+  printf("start of print");
   while (*tokens[i] != '\0') {
     printf("token[%d] = %s\n", tokens[i]);
     i++;
@@ -169,6 +179,7 @@ void free_tokens(char **tokens) {
 
   int i = 0;
   // Iterate through the tokens and free each one
+  printf("start of free");
   while (*tokens[i] != '\0') {
     free(tokens[i]);
     i++;
