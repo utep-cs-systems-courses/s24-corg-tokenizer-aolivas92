@@ -114,15 +114,14 @@ copy_str(char *inStr, short len) {
   if (!cpyStr)
     return NULL;
 
-  printf("before copy:");
   // For i to len and inStr not a space copy each char to cpyStr
   int i;
   for (i = 0; i < len; i++) {
     *(cpyStr + i) = *(inStr + i);
   }
- 
-  *cpyStr = '\0';
-  printf("after copy:");
+
+  *(cpyStr + len) = '\0';
+
   return cpyStr;
 }
 
@@ -145,25 +144,18 @@ tokenize(char *str) {
 
   int i = 0;
   // While we aren't at the end of the string
-  printf("start of tokenizer\n");
   while (numTokens) {
     // get the start of the token and verify
     char *tokenStrtPtr = token_start(str);
-    printf("start of token: %c\n", *tokenStrtPtr);
     if (tokenStrtPtr == NULL)
       break;
 
     // Get the end of the token and use that to get the len
     char *tokenEndPtr = token_terminator(tokenStrtPtr);
-    printf("end of token: %c\n", *tokenEndPtr);
     short tokenLen = tokenEndPtr - tokenStrtPtr;
-    printf("token len: %d\n", tokenLen);
 
     // Copy the token to our current tokens location
-    printf("before copy_str:\n");
-    char *copy = copy_str(tokenStrtPtr, tokenLen);
-    printf("copy String: %s", *copy);
-    tokens[i] = copy;
+    tokens[i] = copy_str(tokenStrtPtr, tokenLen);
 
     // Set the start of the string to the end of our token
     str = tokenEndPtr;
@@ -173,6 +165,7 @@ tokenize(char *str) {
   }
 
   tokens[i] = '\0';
+  tokens[i+1] = '\0';
   return tokens;
 }
 
@@ -185,9 +178,10 @@ void print_tokens(char **tokens) {
   int i = 0;
   // Iterate through the tokens and print the strings
   while (*tokens[i] != '\0') {
-    printf("token[%d] = %s\n", tokens[i]);
+    printf("token[%d] = %s\n", i, tokens[i]);
     i++;
   }
+  printf("after print_tokens");
 }
 
 /* free_tokens: frees all tokens and the vector containing them. */
