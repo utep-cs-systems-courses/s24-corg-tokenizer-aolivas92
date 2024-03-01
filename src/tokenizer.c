@@ -114,17 +114,16 @@ copy_str(char *inStr, short len) {
   if (!cpyStr)
     return NULL;
 
-  char *cpyStrStart = cpyStr;
   printf("before copy:");
   // For i to len and inStr not a space copy each char to cpyStr
   int i;
   for (i = 0; i < len; i++) {
-    *cpyStr++ = *inStr++;
+    *(cpyStr + i) = *(inStr + i);
   }
  
   *cpyStr = '\0';
   printf("after copy:");
-  return cpyStrStart;
+  return cpyStr;
 }
 
 /* tokenize: Returns a freshly allocated zero-terminated vector of freshly allocated space-separated tokens from zero-terminated str. */
