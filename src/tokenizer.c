@@ -4,8 +4,6 @@
 
 #define BUFFER_SIZE 1000     /* buffer size */
 
-int getline2(char [], int);
-
 int main() {
   char *s = NULL;
   long size = BUFFER_SIZE;
@@ -34,7 +32,7 @@ int space_char(char c) {
 
 /* non_space_char: returns non-zero if c is a non-whitespace */
 int non_space_char(char c) {
-  if (c != ' ' || c != '\t' || c != '\0')
+  if (c != ' ' && c != '\t' && c != '\0')
     return 1;
 
   return 0;
@@ -48,11 +46,12 @@ token_start(char *str) {
     return NULL;
 
   // skip all the whitespace
-  printf("start of token_start");
   while (space_char(*str))
       str++;
 
-  return str;
+  // Verify it's valid
+  if (non_space_char(*str) && *str != '\0' && *str != '\n')
+    return str;
 
   return NULL;
 }
@@ -65,7 +64,6 @@ token_terminator(char *token) {
     return NULL;
 
   // keep going until we hit a new line or a space
-  printf("start of terminator");
   while (non_space_char(*token) && *token != '\n')
     token++;
 
@@ -75,16 +73,31 @@ token_terminator(char *token) {
 /* count_tokens: counts the number of tokens in the string argument */
 int count_tokens(char *str) {
   int count = 0;
+  int inWord = 0;
   // If pointer doesn't exist return NULL
   if(!str)
     return -1;
 
-  // Keep counting until we hit a space or new line
-  printf("start of count");
-  while (non_space_char(*str) && *str != '\n') {
+  // ship whitespace
+  while (space_char(*str))
     str++;
-    count++;
+
+  // Keep counting until we hit a terminating zero or new line
+  while (*str != '\0' && *str != '\n') {
+    if (space_char(*str) || *str == '\n') {
+      if (inWord) {
+	count++;
+	inWord = 0;
+      }
+    } else {
+      if (!inWord)
+	inWord = 1;
+    }
+    str++;
   }
+
+  if (inWord)
+    count++;
 
   return count;
 }
@@ -97,15 +110,14 @@ copy_str(char *inStr, short len) {
     return NULL;
   
   char *cpyStr;
-  cpyStr = (char *)malloc(len);
+  cpyStr = (char *)malloc(len+1);
 
   // If we failed to allocated return NULL
   if (!cpyStr)
     return NULL;
 
   // For i to len and inStr not a space copy each char to cpyStr
-  printf("start of cpy");
-  for (int i = 0; i < len && non_space_char(*inStr); i++)
+  for (int i = 0; i < len && *inStr != '\0'; i++)
     cpyStr[i] = *inStr++;
 
   cpyStr[len] = '\0';
@@ -132,24 +144,31 @@ tokenize(char *str) {
 
   int i = 0;
   // While we aren't at the end of the string
-  printf("start of tokenizer");
-  while (*str) {
+  printf("start of tokenizer\n");
+  while (numTokens) {
     // get the start of the token and verify
     char *tokenStrtPtr = token_start(str);
+    printf("start of token: %c\n", *tokenStrtPtr);
     if (tokenStrtPtr == NULL)
       break;
 
     // Get the end of the token and use that to get the len
     char *tokenEndPtr = token_terminator(tokenStrtPtr);
+    printf("end of token: %c\n", *tokenEndPtr);
     int tokenLen = tokenEndPtr - tokenStrtPtr;
+    printf("token len: %d", tokenLen);
 
     // Copy the token to our current tokens location
-    tokens[i] = copy_str(tokenStrtPtr, tokenLen);
+    printf("before copy_str\n");
+    char *copy = copy_str(tokenStrtPtr, tokenLen);
+    printf("copy String: %s", *copy);
+    tokens[i] = copy;
 
     // Set the start of the string to the end of our token
     str = tokenEndPtr;
     // Move on to the next point in the tokens
     i++;
+    numTokens--;
   }
 
   tokens[i] = '\0';
@@ -164,7 +183,6 @@ void print_tokens(char **tokens) {
 
   int i = 0;
   // Iterate through the tokens and print the strings
-  printf("start of print");
   while (*tokens[i] != '\0') {
     printf("token[%d] = %s\n", tokens[i]);
     i++;
@@ -179,7 +197,6 @@ void free_tokens(char **tokens) {
 
   int i = 0;
   // Iterate through the tokens and free each one
-  printf("start of free");
   while (*tokens[i] != '\0') {
     free(tokens[i]);
     i++;
