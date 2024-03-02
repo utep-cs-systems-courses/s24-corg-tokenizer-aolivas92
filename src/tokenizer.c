@@ -4,13 +4,12 @@
 #include "history.h"
 
 #define BUFFER_SIZE 1000     /* buffer size */
-List *currList; // Couldn't do it without changing parameters
 
 int main() {
   char *s = NULL;
   long size = BUFFER_SIZE;
   int characters;
-  currList = init_history();
+  List *currList = init_history();
 
   printf("Options: 1) to view history | !# to veiw a specific history | enter words to tokenize\n");
   printf(">");
@@ -22,9 +21,13 @@ int main() {
       int id = atoi(s);
       char *currStr = get_history(currList, id);
       printf("Item %d: %s\n", id, currStr);
+      char ** tokens = tokenize(currStr);
+      print_tokens(tokens);
+      free_tokens(tokens);
     } else {
       printf("%s", s);
       char ** tokens = tokenize(s);
+      add_history(currList, s);
       print_tokens(tokens);
       free_tokens(tokens);
     }
@@ -171,8 +174,7 @@ tokenize(char *str) {
     // Copy the token to our current tokens location
     char *cpyStr = copy_str(tokenStrtPtr, tokenLen);
     tokens[i] = cpyStr;
-    add_history(currList, cpyStr);
-
+    
     // Set the start of the string to the end of our token
     str = tokenEndPtr;
     // Move on to the next point in the tokens

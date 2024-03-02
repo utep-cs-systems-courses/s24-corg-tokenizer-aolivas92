@@ -21,11 +21,21 @@ void add_history(List *list, char *str) {
   if (!newItem)
     return;
 
+  // Create a copy of the line
+  int len;
+  while (*(str+len) != '\0' && *(str+len) != '\n')
+    len++;
+  
+  char *cpyLine = malloc(len+1);
+  
+  int i;
+  for (i = 0; i < len; i++)
+    *(cpyLine + i) = *(str + i);
+  
+  *(cpyLine + len) = '\0';
+  
   // Define the new item
-  char *tokenStrtPtr = token_start(str);
-  char *tokenEndPtr = token_terminator(tokenStrtPtr);
-  short tokenLen = tokenEndPtr - tokenStrtPtr;
-  newItem->str = copy_str(str, tokenLen);
+  newItem->str = cpyLine;
   newItem->next = NULL;
 
   // Put the new item in the end
